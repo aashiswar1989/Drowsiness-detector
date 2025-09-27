@@ -1,0 +1,31 @@
+# Virtual environments
+venv/
+.env/
+
+# Data and artifacts (large files)
+dataset/
+artifacts/
+experiments/
+logs/
+temp_uploads/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build files
+build/
+dist/
+*.egg-info
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Git & IDE stuff
+.git/
+.gitignore
+.vscode/

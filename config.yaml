@@ -1,0 +1,19 @@
+artifacts_root: artifacts
+
+data_ingestion:
+  root_dir: dataset/train
+  target_dir: artifacts/data_ingestion/train_data_raw
+  test_data: artifacts/data_ingestion/test_data
+
+data_transformation:
+  root_dir: artifacts/data_transformation
+  training_data: artifacts/data_transformation/train.csv
+  data_split: artifacts/data_transformation/data_split.pkl
+  normalization: artifacts/data_transformation/normalization.pkl
+  landmarker_task: artifacts/data_transformation/face_landmarker.task
+
+training:
+  model_dir: artifacts/trained_model
+  model_name: artifacts/trained_model/drowsiness_detector_model.pth
+
+

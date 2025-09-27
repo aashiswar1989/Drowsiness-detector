@@ -1,0 +1,13 @@
+opencv-python
+mediapipe
+scikit-learn
+torch --index-url https://download.pytorch.org/whl/cpu
+pandas
+numpy
+matplotlib
+python-box
+ensure
+fastapi
+uvicorn
+python-multipart
+-e .
