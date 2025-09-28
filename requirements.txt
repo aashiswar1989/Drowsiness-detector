@@ -1,7 +1,7 @@
 opencv-python
 mediapipe
 scikit-learn
-torch --index-url https://download.pytorch.org/whl/cpu
+torch
 pandas
 numpy
 matplotlib
@@ -10,4 +10,6 @@ ensure
 fastapi
 uvicorn
 python-multipart
+dvc
+mlflow
 -e .

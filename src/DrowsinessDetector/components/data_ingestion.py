@@ -38,9 +38,20 @@ class DataIngestion():
         """
         Splits the video files into training and testing sets.
         """
+        random.seed(42)
         random.shuffle(video_files)
         split_index = int(len(video_files) * (1 - test_split))
         return video_files[:split_index], video_files[split_index:]
+    
+
+    def write_split(self, split: str, file_list: list, file_path: Path):
+        """
+        Writes the split information to a file.
+        """
+        with open(file_path, 'w') as f:
+            for file in file_list:
+                f.write(str(file) + '\n')
+            logger.info(f"Stored {split} file paths in {file_path}.")
 
 
     def copy_files(self, file_list, isTrain=True):
@@ -86,8 +97,16 @@ class DataIngestion():
             train_data = awake_train + drowsy_train
             test_data = awake_test + drowsy_test
 
-            self.copy_files(train_data, isTrain=True)
-            self.copy_files(test_data, isTrain=False)
+
+            if not(self.config.target_dir.exists() or self.config.test_data.exists()):
+                create_directories([self.config.target_dir, self.config.test_data])
+
+            self.write_split('training', train_data, self.config.target_dir/'train_and_val.txt')
+            self.write_split('testing', test_data, self.config.test_data/'test.txt')
+
+
+            # self.copy_files(train_data, isTrain=True)
+            # self.copy_files(test_data, isTrain=False)
                 
             logger.info(f"Training data copied from {self.config.root_dir} to {self.config.target_dir}.")
             

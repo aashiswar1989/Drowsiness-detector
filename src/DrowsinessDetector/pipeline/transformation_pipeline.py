@@ -15,10 +15,10 @@ class TransformationPipeline:
             # Get the transformation configuration
             data_transformation_config = self.config.data_transformation_config()
             data_transformation = DataTransformation(config=data_transformation_config)
-            if data_transformation_config.training_data.exists():
-                logger.info("Training data already exists. Skipping data transformation.")
-                print("Training data already exists. Skipping data transformation.")
-                return
+            # if data_transformation_config.training_data.exists():
+            #     logger.info("Training data already exists. Skipping data transformation.")
+            #     print("Training data already exists. Skipping data transformation.")
+            #     return
             
             data_transformation.initiate_data_transformation()
             logger.info("Data transformation pipeline completed successfully.")
@@ -28,7 +28,7 @@ class TransformationPipeline:
             logger.error(f"Error in transformation pipeline: {e}")
             raise e
         
-# if __name__ == "__main__":
-#     config_manager = ConfigurationManager()
-#     transformation_pipeline = TransformationPipeline(config=config_manager)
-#     transformation_pipeline.Run_Transformation()
+if __name__ == "__main__":
+    config_manager = ConfigurationManager()
+    transformation_pipeline = TransformationPipeline(config=config_manager)
+    transformation_pipeline.Run_Transformation()

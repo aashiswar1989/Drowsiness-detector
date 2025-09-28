@@ -18,10 +18,10 @@ class IngestionPipeline:
             data_ingestion_config = self.config.data_ingestion_config()
             data_ingestion = DataIngestion(config=data_ingestion_config)
             
-            if data_ingestion_config.target_dir.exists() and data_ingestion_config.test_data.exists():
-                logger.info(f"Training Data already ingested at {data_ingestion_config.target_dir}. Skipping ingestion step.")                
-                print(f"Training Data already ingested at {data_ingestion_config.target_dir}. Skipping ingestion step.")
-                return
+            # if data_ingestion_config.target_dir.exists() and data_ingestion_config.test_data.exists():
+            #     logger.info(f"Training Data already ingested at {data_ingestion_config.target_dir}. Skipping ingestion step.")                
+            #     print(f"Training Data already ingested at {data_ingestion_config.target_dir}. Skipping ingestion step.")
+            #     return
             
             data_ingestion.initiate_data_ingestion()
             logger.info("Data ingestion pipeline completed successfully.")
@@ -30,7 +30,7 @@ class IngestionPipeline:
             logger.error(f"Error in ingestion pipeline: {e}")
             raise e
         
-# if __name__ == "__main__":
-#     config_manager = ConfigurationManager()
-#     ingestion_pipeline = IngestionPipeline(config=config_manager)
-#     ingestion_pipeline.Run_Ingestion()
+if __name__ == "__main__":
+    config_manager = ConfigurationManager()
+    ingestion_pipeline = IngestionPipeline(config=config_manager)
+    ingestion_pipeline.Run_Ingestion()

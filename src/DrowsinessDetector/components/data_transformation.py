@@ -318,7 +318,10 @@ class DataTransformation():
             
             self.download_task()
 
-            video_file_list = [f for f in self.config.raw_data.rglob("*") if f.suffix.lower() in self.config.video_formats]
+            with open(self.config.raw_data/'train_and_val.txt', 'r') as f:
+                video_file_list = [Path(line.strip()) for line in f.readlines() if line.strip()]
+
+            # video_file_list = [f for f in self.config.raw_data.rglob("*") if f.suffix.lower() in self.config.video_formats]
             if not video_file_list:
                 logger.error(f"No video files found in {self.config.raw_data}.")   
 
