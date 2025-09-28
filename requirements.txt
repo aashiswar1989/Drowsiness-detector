@@ -12,4 +12,5 @@ uvicorn
 python-multipart
 dvc
 mlflow
+dvc-s3
 -e .
