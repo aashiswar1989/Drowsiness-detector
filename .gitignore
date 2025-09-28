@@ -27,7 +27,10 @@ share/python-wheels/
 MANIFEST
 
 #data, logs, experiments
-artifacts/
+artifacts/*
+!artifacts/data_ingestion/train_data_raw/
+!artifacts/data_ingestion/test_data/
+
 dataset/
 logs/
 experiments/
