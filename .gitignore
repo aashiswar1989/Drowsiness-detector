@@ -29,7 +29,7 @@ MANIFEST
 #data, logs, experiments
 # artifacts/*
 artifacts/data_transformation/
-artifacts/trained_model/
+artifacts/trained_model/drowsiness_detector_model.pth
 
 dataset/
 logs/

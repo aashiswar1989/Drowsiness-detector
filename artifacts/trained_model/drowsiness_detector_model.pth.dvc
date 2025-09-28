@@ -1,0 +1,5 @@
+outs:
+- md5: a08705b32cf6569fc98a5a6a21a5344e
+  size: 1068739
+  hash: md5
+  path: drowsiness_detector_model.pth
