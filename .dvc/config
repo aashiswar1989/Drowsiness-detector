@@ -1,4 +1,6 @@
 [core]
-    remote = s3remote
+    remote = s3model
 ['remote "s3remote"']
     url = s3://drowsiness-dvc-bucket/dataset/
+['remote "s3model"']
+    url = s3://drowsiness-dvc-bucket/model/

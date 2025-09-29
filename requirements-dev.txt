@@ -1,7 +1,7 @@
 opencv-python
 mediapipe
 scikit-learn
-# torch
+torch
 pandas
 numpy
 matplotlib
@@ -10,3 +10,7 @@ ensure
 fastapi
 uvicorn
 python-multipart
+dvc
+mlflow
+dvc-s3
+-e .
