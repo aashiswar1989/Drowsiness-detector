@@ -23,19 +23,21 @@ model_eval.model = MODEL
 
 def make_predictions(video_path: str):
     """
-    Make drowsiness predictions on the given video file.
+    Make drowsiness predictions on the uploaded video file.
     
     Args:
         video_path (str): Path to the video file.
         
-    Returns:
-        list: List of predictions for each frame in the video.
+    Yields:
+        dict: Prediction results with confidence and label.
     """
     try:
         preprocessed_object = DataTransformation(config=data_transformation_config)
-        prediction = list(model_eval.predict_drowsiness(video=Path(video_path), preprocess_obj=preprocessed_object, eval=False))
-        return prediction
+        for prediction in model_eval.predict_drowsiness(video = Path(video_path), preprocess_obj=preprocessed_object, eval=False):
+            logger.info(f'Yielded Prediction for the current sequence is : {prediction}')
+            # print(f'Yielded Prediction for the current sequence is : {prediction}')
+            yield prediction
     
     except Exception as e:
         logger.error(f"Error making predictions: {e}")
-        return None
+        yield {"error": str(e)}

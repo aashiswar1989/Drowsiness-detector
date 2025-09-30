@@ -1,9 +1,10 @@
 # app.py
 import shutil
+import json
 import uuid
 from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 import uvicorn
 from service import make_predictions
 
@@ -21,7 +22,7 @@ app = FastAPI(
 # -------------------------------
 @app.get("/")
 def root():
-    return {"message": "Welcome to the Drowsiness Detection API"}
+    return "Welcome to the Drowsiness Detection API"
 
 # -------------------------------
 # Prediction endpoint
@@ -30,16 +31,16 @@ def root():
 async def predict(video: UploadFile = File(...)):
     """
     Upload a video file and get drowsiness predictions per 30-frame sequence.
-    - Accepts: .mp4 files
-    - Returns: JSON with confidence and label for each sequence
+    - Accepts: .mp4, .avi, .mov files
+    - Returns: Stream of predictions with confidence and label for each sequence
     """
 
     # 1. Validate file type
-    if not video.filename.endswith(".mp4"):
-        raise HTTPException(status_code=400, detail="Only .mp4 files are supported.")
+    if not video.filename.endswith((".mp4", ".avi", ".mov")):
+        raise HTTPException(status_code=400, detail="Invalid video format.")
 
     try:
-        # 2. Save uploaded file temporarily
+        # Save uploaded file temporarily
         temp_dir = Path("temp_uploads")
         temp_dir.mkdir(parents=True, exist_ok=True)
 
@@ -50,14 +51,20 @@ async def predict(video: UploadFile = File(...)):
         with open(video_path, "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
 
-        # 3. Run prediction using service.py
-        predictions = make_predictions(str(video_path))
+        # Yield predictions for each 30-frame sequence
+        def stream_preds():
+            try:
+                for prediction in make_predictions(str(video_path)):
+                    # print(json.dumps(prediction))
+                    yield f"data: {json.dumps(prediction)}\n\n"  
 
-        # 4. Delete the file after processing (optional but recommended)
-        video_path.unlink(missing_ok=True)
+            finally:
+                # Delete the temporarily saved file after processing
+                video_path.unlink(missing_ok=True)
 
-        # 5. Return JSON response
-        return JSONResponse(content={"predictions": predictions})
+
+        # Return response for every 30 frame sequence
+        return StreamingResponse(stream_preds(), media_type="text/event-stream")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")

@@ -131,10 +131,15 @@ class DataTransformation():
 
         frame_cnt = 0
 
+        if cap.isOpened() == False:
+            logger.error(f"Error opening video file {video}. Check if the file exists and is accessible.")
+            
+
         # Process the video frame by frame
-        while cap.isOpened():            
+        while cap.isOpened():         
             ret, frame = cap.read()
             if not ret:
+                logger.info(f"No more frames to read from {video}. Ending processing.")
                 break
             frame_cnt += 1
             logger.info(f"Reading frame {frame_cnt} from {video}")
