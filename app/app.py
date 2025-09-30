@@ -1,33 +1,26 @@
-# app.py
 import shutil
 import json
-import uuid
+import threading
 from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.background import P
+from fastapi.responses import StreamingResponse
 import uvicorn
 from service import make_predictions
+import gradio as gr
+import requests
+import sseclient
+from DrowsinessDetector import logger
 
-# -------------------------------
-# Create FastAPI instance
-# -------------------------------
-app = FastAPI(
-    title="Drowsiness Detection API",
-    description="Predicts drowsiness from a video using EAR/MAR LSTM model",
-    version="1.0"
-)
 
-# -------------------------------
-# Root endpoint
-# -------------------------------
-@app.get("/")
-def root():
+
+app = FastAPI()
+
+@app.get('/')
+def welcome():
     return "Welcome to the Drowsiness Detection API"
 
-# -------------------------------
-# Prediction endpoint
-# -------------------------------
-@app.post("/predict")
+@app.post('/predict')
 async def predict(video: UploadFile = File(...)):
     """
     Upload a video file and get drowsiness predictions per 30-frame sequence.
@@ -43,11 +36,9 @@ async def predict(video: UploadFile = File(...)):
         # Save uploaded file temporarily
         temp_dir = Path("temp_uploads")
         temp_dir.mkdir(parents=True, exist_ok=True)
+        video_path = temp_dir / video.filename
 
-        # Use a unique filename to avoid conflicts
-        unique_name = f"{uuid.uuid4()}_{video.filename}"
-        video_path = temp_dir / unique_name
-
+        # Saving uploaded file temporarily
         with open(video_path, "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
 
@@ -59,21 +50,56 @@ async def predict(video: UploadFile = File(...)):
                     yield f"data: {json.dumps(prediction)}\n\n"  
 
             finally:
-                # Delete the temporarily saved file after processing
-                video_path.unlink(missing_ok=True)
+                # Clean up temporary file
+                if video_path.exists():
+                    video_path.unlink()
 
-
-        # Return response for every 30 frame sequence
         return StreamingResponse(stream_preds(), media_type="text/event-stream")
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {e}")
+    
+def run_uvicorn():
+    uvicorn.run("app:app", host = '0.0.0.0', port = 8000)
+
+FASTAPI_APP_URL = "http://127.0.0.1:8000/predict"
 
 
+def stream_output(video_file):
+    with open(video_file.name, "rb") as f:
+        response = requests.post(FASTAPI_APP_URL, 
+                                 files={"video": f},
+                                 stream=True)
+        
+    if response.status_code != 200:
+        logger.error(f"Request failed with status code {response.status_code}: {response.text}")
+        return
+
+    client = sseclient.SSEClient(response)
+    for event in client.events():
+        if event.data:
+            yield json.loads(event.data)
+
+def gradio_interface():
+    with gr.Blocks(title = "Driver Drowsiness Detection") as demo:
+        gr.Markdown("Driver Drowsiness Detection using Facial Landmarks")
+
+        with gr.Row():
+            with gr.Column():
+                video_input = gr.File(label = "Upload video in .mp4, .avi, .mov format", file_types = ['.mp4', '.avi', '.mov'])
+                submit_btn = gr.Button("Submit")
+
+            with gr.Column():
+                prediction = gr.Textbox(label = "Live Prediction for a sequence of every 30 frames", 
+                                        lines = 10,
+                                        placeholder = "Predictions will be appear here...")
+                
+        submit_btn.click(fn = stream_output,
+                         inputs = video_input,
+                         outputs = prediction)
+        
+        demo.launch()
+        
 if __name__ == "__main__":
-    uvicorn.run(
-        "app:app",  # <package>.<file>:<FastAPI instance>
-        host="127.0.0.1",
-        port=8000,
-        reload=True
-    )
+    uvicorn_start = threading.Thread(target = run_uvicorn, daemon = True).start()
+    gradio_interface()
