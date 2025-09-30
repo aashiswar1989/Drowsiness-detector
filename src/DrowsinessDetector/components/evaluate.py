@@ -30,7 +30,10 @@ class ModelEvaluation:
             return []
         
         logger.info(f"Loading video from {test_video_path}")
-        video_files = [f for f in test_video_path.rglob('*') if f.suffix.lower() in self.config.video_formats]
+        with open(test_video_path, 'r') as f:
+            video_files = [Path(line.strip()) for line in f.readline() if line.strip()] 
+        
+        # video_files = [f for f in test_video_path.rglob('*') if f.suffix.lower() in self.config.video_formats]
 
         if not video_files:
             logger.warning(f"No video files found in {test_video_path}.")
@@ -97,7 +100,7 @@ class ModelEvaluation:
             else:
                 # print(f'Test sequences processed: {test_seq_cnt}', end='\r')
                 yield {
-                    "confidence": pred_prob,
+                    "confidence": round(pred_prob,2),
                     "predicted_label": "Drowsy" if int(pred_label) == 1 else "Awake"
                 }
 
@@ -157,7 +160,7 @@ class ModelEvaluation:
             logger.error("Model loading failed. Exiting evaluation.")
             return
         
-        test_videos = self.list_test_videos(self.config.test_data)
+        test_videos = self.list_test_videos(self.config.test_data/'test.txt')
         if not test_videos:
             logger.error("No test videos found. Exiting evaluation.")
             return

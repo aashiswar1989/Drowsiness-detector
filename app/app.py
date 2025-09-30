@@ -66,6 +66,10 @@ FASTAPI_APP_URL = "http://127.0.0.1:8000/predict"
 
 
 def stream_output(video_file):
+    if video_file is None:
+        logger.error("No video file provided.")
+        return "No video upoaded. Please upload a video file."
+    
     with open(video_file.name, "rb") as f:
         response = requests.post(FASTAPI_APP_URL, 
                                  files={"video": f},
@@ -88,6 +92,7 @@ def gradio_interface():
             with gr.Column():
                 video_input = gr.File(label = "Upload video in .mp4, .avi, .mov format", file_types = ['.mp4', '.avi', '.mov'])
                 submit_btn = gr.Button("Submit")
+                reset_btn = gr.Button("Reset")
 
             with gr.Column():
                 prediction = gr.Textbox(label = "Live Prediction for a sequence of every 30 frames", 
@@ -96,7 +101,13 @@ def gradio_interface():
                 
         submit_btn.click(fn = stream_output,
                          inputs = video_input,
-                         outputs = prediction)
+                         outputs = prediction).then(fn= lambda : (None, "Video processed. Upload another video or reset."),
+                                                    inputs = None,
+                                                    outputs = [video_input, prediction])
+        
+        reset_btn.click(fn = lambda : (None, ""),
+                        inputs = None,
+                        outputs = [video_input, prediction])
         
         demo.launch()
         
