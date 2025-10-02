@@ -10,7 +10,7 @@ from service import make_predictions
 import gradio as gr
 import requests
 import sseclient
-from src.DrowsinessDetector import logger
+from DrowsinessDetector import logger
 
 
 

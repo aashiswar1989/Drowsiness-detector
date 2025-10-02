@@ -1,12 +1,12 @@
 from pathlib import Path
 import numpy as np
-from src.DrowsinessDetector.data_config.data_cfg import DataTransformationConfig
-from src.DrowsinessDetector.data_config.data_cfg import EvaluationConfig
-from src.DrowsinessDetector.data_config.data_cfg import TrainingConfig
-from src.DrowsinessDetector.components.data_transformation import DataTransformation
-from src.DrowsinessDetector.components.evaluate import ModelEvaluation
-from src.DrowsinessDetector.config_manager.config import ConfigurationManager
-from src.DrowsinessDetector import logger
+from DrowsinessDetector.data_config.data_cfg import DataTransformationConfig
+from DrowsinessDetector.data_config.data_cfg import EvaluationConfig
+from DrowsinessDetector.data_config.data_cfg import TrainingConfig
+from DrowsinessDetector.components.data_transformation import DataTransformation
+from DrowsinessDetector.components.evaluate import ModelEvaluation
+from DrowsinessDetector.config_manager.config import ConfigurationManager
+from DrowsinessDetector import logger
 
 config = ConfigurationManager()
 data_transformation_config = config.data_transformation_config()
