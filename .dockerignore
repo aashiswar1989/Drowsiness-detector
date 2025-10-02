@@ -4,10 +4,12 @@ venv/
 
 # Data and artifacts (large files)
 dataset/
-artifacts/
+artifacts/data_ingestion/
 experiments/
 logs/
 temp_uploads/
+template.py
+# setup.py
 
 # Python cache
 __pycache__/
@@ -29,3 +31,5 @@ dist/
 .git/
 .gitignore
 .vscode/
+*.dvc
+.dvc/

@@ -1,12 +1,14 @@
 opencv-python
 mediapipe
-scikit-learn
-# torch
-pandas
+# scikit-learn
+torch --index-url https://download.pytorch.org/whl/cpu
+# pandas
 numpy
-matplotlib
+# matplotlib
 python-box
 ensure
 fastapi
 uvicorn
 python-multipart
+gradio
+-e .

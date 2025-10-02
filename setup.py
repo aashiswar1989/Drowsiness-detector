@@ -17,7 +17,7 @@ setup(
     name = PROJECT_NAME,
     version = "0.1.0",
     author = AUTHOR,
-    install_requires = get_requirements('requirements.txt'),
+    install_requires = get_requirements('requirements_dev.txt'),
     packages = find_packages(),
     package_dir={"": "src"},
 )
