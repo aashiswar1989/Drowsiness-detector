@@ -51,7 +51,7 @@ def gradio_interface():
                         inputs = None,
                         outputs = [video_input, prediction])
         
-        demo.launch()
+        demo.launch(server_name="0.0.0.0", server_port=7860)
         
 if __name__ == "__main__":
     gradio_interface()
